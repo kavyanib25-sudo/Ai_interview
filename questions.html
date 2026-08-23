@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Interview - Adaptive Interview</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    color:white;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at 8% 45%,rgba(255,0,0,.20),transparent 28%),
+        radial-gradient(circle at 90% 15%,rgba(255,30,30,.12),transparent 25%),
+        #050608;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+        linear-gradient(rgba(255,0,0,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,0,0,.035) 1px,transparent 1px);
+    background-size:45px 45px;
+    pointer-events:none;
+}
+
+.topbar{
+    padding:25px 5%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid rgba(255,50,50,.08);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-dot{
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    background:#ff2525;
+    box-shadow:0 0 10px #ff2525,0 0 25px #ff2525;
+}
+
+.brand-name{
+    font-size:18px;
+    font-weight:600;
+}
+
+.info{
+    display:flex;
+    gap:20px;
+    color:#737b88;
+    font-size:11px;
+}
+
+.info span{
+    color:#ff4141;
+    font-weight:bold;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+    margin:auto;
+    padding:55px 0 80px;
+}
+
+.eyebrow{
+    color:#ff3939;
+    font-size:10px;
+    font-weight:bold;
+    letter-spacing:3px;
+    margin-bottom:15px;
+}
+
+.heading h1{
+    font-size:clamp(38px,5vw,55px);
+    letter-spacing:-2px;
+    margin-bottom:15px;
+}
+
+.heading h1 span{
+    color:#ff3737;
+}
+
+.heading p{
+    color:#858c99;
+    font-size:14px;
+    line-height:1.7;
+}
+
+.progress{
+    margin:35px 0;
+}
+
+.progress-top{
+    display:flex;
+    justify-content:space-between;
+    color:#737b88;
+    font-size:10px;
+    margin-bottom:10px;
+}
+
+.progress-number{
+    color:#ff4141;
+}
+
+.progress-bar{
+    height:5px;
+    background:#171a20;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    width:10%;
+    background:linear-gradient(90deg,#8b0c0c,#ff3030);
+    transition:.5s;
+}
+
+.question-card{
+    background:linear-gradient(145deg,rgba(15,18,24,.97),rgba(8,10,15,.97));
+    border:1px solid rgba(255,50,50,.13);
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 25px 70px rgba(0,0,0,.5);
+}
+
+.question-tag{
+    color:#ff4545;
+    font-size:9px;
+    font-weight:bold;
+    letter-spacing:2px;
+    margin-bottom:18px;
+}
+
+.question-text{
+    font-size:25px;
+    line-height:1.45;
+    margin-bottom:25px;
+}
+
+.difficulty{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:20px;
+    background:rgba(255,30,30,.08);
+    border:1px solid rgba(255,50,50,.2);
+    color:#ff4545;
+    font-size:9px;
+    font-weight:bold;
+    letter-spacing:1px;
+    margin-bottom:25px;
+}
+
+.answer-label{
+    display:block;
+    color:#8a919c;
+    font-size:10px;
+    font-weight:bold;
+    letter-spacing:1.5px;
+    margin-bottom:10px;
+}
+
+.answer-box{
+    width:100%;
+    min-height:160px;
+    resize:vertical;
+    padding:15px;
+    background:#080a0f;
+    border:1px solid #292e38;
+    border-radius:12px;
+    color:white;
+    font-size:14px;
+    line-height:1.6;
+    outline:none;
+}
+
+.answer-box:focus{
+    border-color:#ff3737;
+    box-shadow:0 0 0 3px rgba(255,30,30,.08);
+}
+
+.button-row{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:25px;
+}
+
+.next-button{
+    height:52px;
+    padding:0 30px;
+    border:1px solid rgba(255,70,70,.7);
+    border-radius:10px;
+    background:linear-gradient(110deg,#650b0b,#e51d1d,#700808);
+    background-size:200% 100%;
+    color:white;
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:1px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.next-button:hover{
+    transform:translateY(-2px);
+    background-position:100% 0;
+    box-shadow:0 8px 30px rgba(255,0,0,.3);
+}
+
+.feedback{
+    display:none;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    font-size:11px;
+}
+
+.feedback.good{
+    display:block;
+    color:#36dc89;
+    background:rgba(54,220,137,.06);
+    border:1px solid rgba(54,220,137,.2);
+}
+
+.feedback.average{
+    display:block;
+    color:#ffb13b;
+    background:rgba(255,177,59,.06);
+    border:1px solid rgba(255,177,59,.2);
+}
+
+.feedback.bad{
+    display:block;
+    color:#ff4545;
+    background:rgba(255,30,30,.06);
+    border:1px solid rgba(255,30,30,.2);
+}
+
+.result-card{
+    display:none;
+    text-align:center;
+    background:linear-gradient(145deg,rgba(15,18,24,.97),rgba(8,10,15,.97));
+    border:1px solid rgba(255,50,50,.13);
+    border-radius:20px;
+    padding:45px 30px;
+}
+
+.result-card h2{
+    font-size:32px;
+    margin-bottom:12px;
+}
+
+.result-card h2 span{
+    color:#ff3737;
+}
+
+.result-message{
+    color:#737b88;
+    font-size:13px;
+    margin-bottom:30px;
+}
+
+.score{
+    width:150px;
+    height:150px;
+    margin:0 auto 30px;
+    border-radius:50%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    background:radial-gradient(circle,rgba(255,30,30,.16),#080a0f 65%);
+    border:2px solid rgba(255,40,40,.6);
+}
+
+.score-number{
+    font-size:30px;
+    font-weight:bold;
+}
+
+.score-label{
+    color:#737b88;
+    font-size:9px;
+    letter-spacing:2px;
+    margin-top:5px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:30px;
+}
+
+.stat{
+    padding:20px 10px;
+    background:#080a0f;
+    border:1px solid #292e38;
+    border-radius:12px;
+}
+
+.stat-number{
+    font-size:25px;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+.correct{
+    color:#36dc89;
+}
+
+.skipped{
+    color:#ff9b30;
+}
+
+.wrong{
+    color:#ff3030;
+}
+
+.stat-label{
+    color:#737b88;
+    font-size:9px;
+    letter-spacing:1.5px;
+}
+
+.progression{
+    padding:20px;
+    background:#080a0f;
+    border:1px solid #292e38;
+    border-radius:12px;
+    margin-bottom:25px;
+}
+
+.progression-title{
+    color:#737b88;
+    font-size:10px;
+    letter-spacing:1px;
+    margin-bottom:15px;
+}
+
+.progression-list{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.level{
+    padding:7px 10px;
+    border-radius:8px;
+    font-size:9px;
+    font-weight:bold;
+}
+
+.easy{
+    background:rgba(54,220,137,.1);
+    color:#36dc89;
+}
+
+.medium{
+    background:rgba(255,177,59,.1);
+    color:#ffb13b;
+}
+
+.hard{
+    background:rgba(255,30,30,.1);
+    color:#ff4545;
+}
+
+.home-button{
+    height:50px;
+    padding:0 25px;
+    border:1px solid #292e38;
+    border-radius:10px;
+    background:#0b0e13;
+    color:white;
+    cursor:pointer;
+}
+
+@media(max-width:600px){
+
+    .topbar{
+        padding:20px;
+    }
+
+    .info{
+        display:none;
+    }
+
+    .container{
+        width:calc(100% - 30px);
+        padding:40px 0;
+    }
+
+    .question-card{
+        padding:22px;
+    }
+
+    .question-text{
+        font-size:20px;
+    }
+
+    .next-button{
+        width:100%;
+    }
+
+    .stats{
+        gap:6px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="brand-dot"></div>
+        <div class="brand-name">AI Interview</div>
+    </div>
+
+    <div class="info">
+        <div>TOPIC: <span id="topicDisplay"></span></div>
+        <div>SUBTOPIC: <span id="subtopicDisplay"></span></div>
+    </div>
+
+</header>
+
+<main class="container">
+
+<section class="heading">
+
+    <div class="eyebrow">
+        ADAPTIVE INTERVIEW ENGINE
+    </div>
+
+    <h1>
+        Let's test your <span>knowledge.</span>
+    </h1>
+
+    <p>
+        Your next question changes according to your performance.
+        Strong answers increase difficulty while weak answers
+        move the interview toward foundational concepts.
+    </p>
+
+</section>
+
+<div class="progress">
+
+    <div class="progress-top">
+
+        <span>
+            INTERVIEW PROGRESS
+        </span>
+
+        <span class="progress-number" id="progressNumber">
+            01 / 10
+        </span>
+
+    </div>
+
+    <div class="progress-bar">
+
+        <div
+            class="progress-fill"
+            id="progressFill">
+        </div>
+
+    </div>
+
+</div>
+
+<section class="question-card" id="questionCard">
+
+    <div class="question-tag">
+        QUESTION
+    </div>
+
+    <div
+        class="difficulty"
+        id="difficulty">
+        EASY
+    </div>
+
+    <div
+        class="question-text"
+        id="questionText">
+        Loading...
+    </div>
+
+    <label class="answer-label">
+        YOUR ANSWER
+    </label>
+
+    <textarea
+        class="answer-box"
+        id="answerBox"
+        placeholder="Explain your answer here...">
+    </textarea>
+
+    <div
+        class="feedback"
+        id="feedback">
+    </div>
+
+    <div class="button-row">
+
+        <button
+            class="next-button"
+            id="nextButton">
+            SUBMIT & NEXT →
+        </button>
+
+    </div>
+
+</section>
+
+<section
+    class="result-card"
+    id="resultCard">
+
+    <div class="eyebrow">
+        INTERVIEW COMPLETE
+    </div>
+
+    <h2>
+        Your <span>Result</span>
+    </h2>
+
+    <p
+        class="result-message"
+        id="resultMessage">
+    </p>
+
+    <div class="score">
+
+        <div
+            class="score-number"
+            id="finalScore">
+            0 / 10
+        </div>
+
+        <div class="score-label">
+            SCORE
+        </div>
+
+    </div>
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <div
+                class="stat-number correct"
+                id="correctCount">
+                0
+            </div>
+
+            <div class="stat-label">
+                CORRECT
+            </div>
+
+        </div>
+
+        <div class="stat">
+
+            <div
+                class="stat-number skipped"
+                id="skippedCount">
+                0
+            </div>
+
+            <div class="stat-label">
+                SKIPPED
+            </div>
+
+        </div>
+
+        <div class="stat">
+
+            <div
+                class="stat-number wrong"
+                id="wrongCount">
+                0
+            </div>
+
+            <div class="stat-label">
+                WRONG
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="progression">
+
+        <div class="progression-title">
+            DIFFICULTY PROGRESSION
+        </div>
+
+        <div
+            class="progression-list"
+            id="progressionList">
+        </div>
+
+    </div>
+
+    <button
+        class="home-button"
+        onclick="window.location.href='index.html'">
+        ← BACK TO HOME
+    </button>
+
+</section>
+
+</main>
+
+<script>
+
+const params =
+    new URLSearchParams(window.location.search);
+
+const topic =
+    params.get("topic") || "JavaScript";
+
+const subtopic =
+    params.get("subtopic") || "Fundamentals";
+
+document.getElementById("topicDisplay").textContent = topic;
+
+document.getElementById("subtopicDisplay").textContent = subtopic;
+
+const questionBank = {
+
+    JavaScript:{
+
+        easy:[
+            "What is JavaScript?",
+            "What are variables in JavaScript?",
+            "What are the basic data types in JavaScript?"
+        ],
+
+        medium:[
+            "What is the difference between let, var and const?",
+            "Explain the difference between == and === in JavaScript.",
+            "What are JavaScript functions and why are they useful?"
+        ],
+
+        hard:[
+            "Explain closures in JavaScript with an example.",
+            "Explain the JavaScript event loop.",
+            "How do promises, async and await work in JavaScript?"
+        ]
+
+    },
+
+    React:{
+
+        easy:[
+            "What is React?",
+            "What is a React component?",
+            "What are props in React?"
+        ],
+
+        medium:[
+            "What is state in React?",
+            "Explain the useState hook.",
+            "What is the Virtual DOM?"
+        ],
+
+        hard:[
+            "Explain useEffect and its dependency array.",
+            "What are custom hooks in React?",
+            "How can you optimize React application performance?"
+        ]
+
+    },
+
+    Python:{
+
+        easy:[
+            "What is Python?",
+            "What are variables in Python?",
+            "What are lists in Python?"
+        ],
+
+        medium:[
+            "What is the difference between a list and tuple?",
+            "Explain dictionaries in Python.",
+            "What is object-oriented programming in Python?"
+        ],
+
+        hard:[
+            "Explain decorators in Python.",
+            "What are generators in Python?",
+            "Explain Python memory management."
+        ]
+
+    },
+
+    Java:{
+
+        easy:[
+            "What is Java?",
+            "What is a class in Java?",
+            "What is an object in Java?"
+        ],
+
+        medium:[
+            "Explain inheritance in Java.",
+            "What is polymorphism?",
+            "What is encapsulation?"
+        ],
+
+        hard:[
+            "Explain abstraction and interfaces in Java.",
+            "Explain method overloading and overriding.",
+            "How does the JVM manage Java programs?"
+        ]
+
+    },
+
+    DSA:{
+
+        easy:[
+            "What is a data structure?",
+            "What is an array?",
+            "What is a linked list?"
+        ],
+
+        medium:[
+            "What is a stack and where is it used?",
+            "Explain binary search.",
+            "What is the difference between BFS and DFS?"
+        ],
+
+        hard:[
+            "Explain the time complexity of common sorting algorithms.",
+            "How would you optimize a searching algorithm?",
+            "Explain dynamic programming with an example."
+        ]
+
+    },
+
+    "Web Development":{
+
+        easy:[
+            "What is HTML?",
+            "What is CSS?",
+            "What is JavaScript used for in web development?"
+        ],
+
+        medium:[
+            "What is responsive web design?",
+            "What is the DOM?",
+            "What is an API?"
+        ],
+
+        hard:[
+            "What is a REST API?",
+            "Explain HTTP and HTTPS.",
+            "Explain the difference between frontend and backend architecture."
+        ]
+
+    }
+
+};
+
+function createCustomQuestions(){
+
+    return {
+
+        easy:[
+            "What is " + subtopic + "?",
+            "What are the basic concepts of " + subtopic + "?",
+            "Why is " + subtopic + " important?"
+        ],
+
+        medium:[
+            "Explain an important concept of " + subtopic + ".",
+            "What are the advantages of " + subtopic + "?",
+            "How is " + subtopic + " used in real projects?"
+        ],
+
+        hard:[
+            "Explain an advanced concept of " + subtopic + ".",
+            "What are common challenges when working with " + subtopic + "?",
+            "How would you optimize a solution involving " + subtopic + "?"
+        ]
+
+    };
+
+}
+
+const bank =
+    questionBank[topic] || createCustomQuestions();
+
+let difficulty = "easy";
+
+let questionCount = 0;
+
+let correct = 0;
+
+let wrong = 0;
+
+let skipped = 0;
+
+let askedQuestions = [];
+
+let previousAnswers = [];
+
+let progression = [];
+
+let currentQuestion = "";
+
+const questionText =
+    document.getElementById("questionText");
+
+const difficultyDisplay =
+    document.getElementById("difficulty");
+
+const answerBox =
+    document.getElementById("answerBox");
+
+const nextButton =
+    document.getElementById("nextButton");
+
+const feedback =
+    document.getElementById("feedback");
+
+function getQuestion(level){
+
+    const available =
+        bank[level].filter(
+            question =>
+            !askedQuestions.includes(question)
+        );
+
+    if(available.length === 0){
+
+        const allQuestions = bank[level];
+
+        const unused =
+            allQuestions.find(
+                q => !askedQuestions.includes(q)
+            );
+
+        if(unused){
+            return unused;
+        }
+
+    }
+
+    if(available.length > 0){
+
+        return available[
+            Math.floor(
+                Math.random() * available.length
+            )
+        ];
+
+    }
+
+    const all =
+        [
+            ...bank.easy,
+            ...bank.medium,
+            ...bank.hard
+        ];
+
+    return all.find(
+        q => !askedQuestions.includes(q)
+    ) || all[0];
+
+}
+
+function showQuestion(){
+
+    currentQuestion =
+        getQuestion(difficulty);
+
+    askedQuestions.push(currentQuestion);
+
+    progression.push(difficulty);
+
+    questionText.textContent =
+        currentQuestion;
+
+    difficultyDisplay.textContent =
+        difficulty.toUpperCase();
+
+    difficultyDisplay.className =
+        "difficulty " + difficulty;
+
+    questionCount++;
+
+    document.getElementById(
+        "progressNumber"
+    ).textContent =
+        String(questionCount).padStart(2,"0") +
+        " / 10";
+
+    document.getElementById(
+        "progressFill"
+    ).style.width =
+        (questionCount * 10) + "%";
+
+    answerBox.value = "";
+
+    feedback.className = "feedback";
+
+    feedback.textContent = "";
+
+}
+
+function analyzeAnswer(answer){
+
+    const text =
+        answer.trim().toLowerCase();
+
+    if(text === ""){
+
+        skipped++;
+
+        return "skipped";
+
+    }
+
+    if(previousAnswers.includes(text)){
+
+        wrong++;
+
+        return "repeated";
+
+    }
+
+    previousAnswers.push(text);
+
+    const words =
+        text.split(/\s+/).length;
+
+    if(words >= 35){
+
+        correct++;
+
+        return "good";
+
+    }
+
+    if(words >= 15){
+
+        correct++;
+
+        return "average";
+
+    }
+
+    wrong++;
+
+    return "bad";
+
+}
+
+function changeDifficulty(result){
+
+    if(result === "good"){
+
+        if(difficulty === "easy"){
+            difficulty = "medium";
+        }
+        else if(difficulty === "medium"){
+            difficulty = "hard";
+        }
+
+    }
+
+    else if(
+        result === "bad" ||
+        result === "repeated"
+    ){
+
+        if(difficulty === "hard"){
+            difficulty = "medium";
+        }
+        else if(difficulty === "medium"){
+            difficulty = "easy";
+        }
+
+    }
+
+}
+
+function showFeedback(result){
+
+    feedback.className = "feedback";
+
+    if(result === "good"){
+
+        feedback.classList.add("good");
+
+        feedback.textContent =
+            "✓ Strong answer! Difficulty increased.";
+
+    }
+
+    else if(result === "average"){
+
+        feedback.classList.add("average");
+
+        feedback.textContent =
+            "≈ Decent answer. Difficulty will remain similar.";
+
+    }
+
+    else if(result === "bad"){
+
+        feedback.classList.add("bad");
+
+        feedback.textContent =
+            "✕ Weak answer. The next question will be easier.";
+
+    }
+
+    else if(result === "skipped"){
+
+        feedback.classList.add("average");
+
+        feedback.textContent =
+            "Skipped. The interview will continue.";
+
+    }
+
+    else if(result === "repeated"){
+
+        feedback.classList.add("bad");
+
+        feedback.textContent =
+            "⚠ Repeated answer detected. Difficulty decreased.";
+
+    }
+
+}
+
+function finishInterview(){
+
+    document.getElementById(
+        "questionCard"
+    ).style.display = "none";
+
+    document.getElementById(
+        "resultCard"
+    ).style.display = "block";
+
+    document.getElementById(
+        "correctCount"
+    ).textContent = correct;
+
+    document.getElementById(
+        "wrongCount"
+    ).textContent = wrong;
+
+    document.getElementById(
+        "skippedCount"
+    ).textContent = skipped;
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        correct + " / 10";
+
+    const message =
+        document.getElementById(
+            "resultMessage"
+        );
+
+    if(correct >= 8){
+
+        message.textContent =
+            "Excellent! Your performance shows strong technical understanding.";
+
+    }
+    else if(correct >= 5){
+
+        message.textContent =
+            "Good attempt! You have a solid foundation and can improve further.";
+
+    }
+    else{
+
+        message.textContent =
+            "Keep practicing. Focus on the fundamentals and try again.";
+
+    }
+
+    const list =
+        document.getElementById(
+            "progressionList"
+        );
+
+    list.innerHTML = "";
+
+    progression.forEach((level,index)=>{
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "level " + level;
+
+        item.textContent =
+            (index + 1) +
+            ". " +
+            level.toUpperCase();
+
+        list.appendChild(item);
+
+    });
+
+}
+
+nextButton.addEventListener("click",()=>{
+
+    const answer =
+        answerBox.value.trim();
+
+    const result =
+        analyzeAnswer(answer);
+
+    showFeedback(result);
+
+    changeDifficulty(result);
+
+    if(questionCount >= 10){
+
+        setTimeout(
+            finishInterview,
+            500
+        );
+
+        return;
+
+    }
+
+    setTimeout(()=>{
+
+        showQuestion();
+
+    },500);
+
+});
+
+showQuestion();
+
+</script>
+
+</body>
+</html>

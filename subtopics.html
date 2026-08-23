@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Interview - Subtopics</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at 8% 45%,rgba(255,0,0,.20),transparent 28%),
+        radial-gradient(circle at 90% 15%,rgba(255,30,30,.12),transparent 25%),
+        #050608;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+        linear-gradient(rgba(255,0,0,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,0,0,.035) 1px,transparent 1px);
+    background-size:45px 45px;
+    pointer-events:none;
+}
+
+.topbar{
+    width:100%;
+    padding:28px 5%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid rgba(255,50,50,.08);
+    position:relative;
+    z-index:2;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-dot{
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    background:#ff2525;
+    box-shadow:0 0 10px #ff2525,0 0 25px #ff2525;
+}
+
+.brand-name{
+    font-size:18px;
+    font-weight:600;
+}
+
+.topic-display{
+    color:#ff4141;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.container{
+    width:90%;
+    max-width:1000px;
+    margin:auto;
+    padding:65px 0;
+    position:relative;
+    z-index:2;
+}
+
+.eyebrow{
+    color:#ff3939;
+    font-size:10px;
+    font-weight:bold;
+    letter-spacing:3px;
+    margin-bottom:15px;
+}
+
+.heading h1{
+    font-size:clamp(38px,5vw,60px);
+    letter-spacing:-3px;
+    margin-bottom:18px;
+}
+
+.heading h1 span{
+    color:#ff3737;
+}
+
+.heading p{
+    color:#858c99;
+    font-size:14px;
+    line-height:1.7;
+    max-width:650px;
+}
+
+.subtopic-grid{
+    margin-top:45px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.subtopic-card{
+    position:relative;
+    padding:25px;
+    min-height:130px;
+    border:1px solid #292e38;
+    border-radius:16px;
+    background:linear-gradient(145deg,#0b0e13,#080a0f);
+    cursor:pointer;
+    transition:.3s;
+}
+
+.subtopic-card:hover{
+    transform:translateY(-5px);
+    border-color:#ff3737;
+    box-shadow:0 15px 35px rgba(255,0,0,.12);
+}
+
+.subtopic-card input{
+    display:none;
+}
+
+.subtopic-icon{
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#12151b;
+    border:1px solid #303540;
+    color:#ff4545;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:18px;
+}
+
+.subtopic-name{
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+.subtopic-description{
+    color:#666e7a;
+    font-size:10px;
+    line-height:1.5;
+}
+
+.check{
+    position:absolute;
+    top:20px;
+    right:20px;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    border:1px solid #353a44;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:transparent;
+}
+
+.subtopic-card input:checked + .subtopic-content{
+    border-color:#ff3030;
+}
+
+.subtopic-card.selected{
+    border-color:#ff3030;
+    background:linear-gradient(145deg,rgba(255,30,30,.15),rgba(50,8,8,.35));
+    box-shadow:0 0 25px rgba(255,30,30,.15);
+}
+
+.subtopic-card.selected .check{
+    background:#ff3030;
+    border-color:#ff3030;
+    color:white;
+}
+
+.start-practice{
+    width:100%;
+    height:58px;
+    margin-top:30px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(110deg,#650b0b,#e51d1d,#700808);
+    background-size:200% 100%;
+    color:white;
+    font-size:13px;
+    font-weight:bold;
+    letter-spacing:1.5px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.start-practice:hover{
+    transform:translateY(-3px);
+    background-position:100% 0;
+    box-shadow:0 10px 35px rgba(255,0,0,.3);
+}
+
+@media(max-width:600px){
+    .container{
+        width:calc(100% - 30px);
+        padding:45px 0;
+    }
+
+    .subtopic-grid{
+        grid-template-columns:1fr;
+    }
+
+    .heading h1{
+        font-size:40px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-dot"></div>
+        <div class="brand-name">AI Interview</div>
+    </div>
+
+    <div>
+        TOPIC:
+        <span class="topic-display" id="topicDisplay">Loading...</span>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="heading">
+        <div class="eyebrow">CHOOSE YOUR FOCUS</div>
+
+        <h1>
+            Select a <span>subtopic.</span>
+        </h1>
+
+        <p>
+            Choose the area you want to practice.
+            The adaptive interviewer will change the difficulty
+            according to your performance.
+        </p>
+    </section>
+
+    <div class="subtopic-grid" id="subtopicGrid"></div>
+
+    <button class="start-practice" id="startPractice">
+        START PRACTICE →
+    </button>
+
+</main>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+
+const topic = params.get("topic") || "JavaScript";
+
+document.getElementById("topicDisplay").textContent = topic;
+
+const subtopics = {
+
+    JavaScript:[
+        ["JS","JavaScript Basics","Variables, data types and operators"],
+        ["DOM","DOM Manipulation","Elements, events and selectors"],
+        ["ASY","Async JavaScript","Promises, async and await"],
+        ["FUN","Functions","Closures, callbacks and scope"],
+        ["ES6","Modern JavaScript","Arrow functions, modules and ES6"],
+        ["ADV","Advanced JS","Prototypes, event loop and execution"]
+    ],
+
+    React:[
+        ["CMP","Components","Functional components and JSX"],
+        ["HOK","React Hooks","useState, useEffect and hooks"],
+        ["STT","State","State management and updates"],
+        ["PRP","Props","Passing data between components"],
+        ["DOM","Virtual DOM","Rendering and reconciliation"],
+        ["ADV","Advanced React","Custom hooks and optimization"]
+    ],
+
+    Python:[
+        ["BAS","Python Basics","Variables, data types and syntax"],
+        ["FUN","Functions","Functions, arguments and scope"],
+        ["OOP","OOP","Classes, objects and inheritance"],
+        ["COL","Collections","Lists, tuples, sets and dictionaries"],
+        ["ERR","Exceptions","Error and exception handling"],
+        ["ADV","Advanced Python","Decorators, generators and modules"]
+    ],
+
+    Java:[
+        ["BAS","Java Basics","Variables, syntax and data types"],
+        ["OOP","OOP","Classes, objects and inheritance"],
+        ["POL","Polymorphism","Overloading and overriding"],
+        ["ABS","Abstraction","Abstract classes and interfaces"],
+        ["EXC","Exceptions","Exception handling"],
+        ["ADV","Advanced Java","Collections, threads and JVM"]
+    ],
+
+    DSA:[
+        ["ARR","Arrays","Array operations and problems"],
+        ["LL","Linked Lists","Nodes and linked list operations"],
+        ["STK","Stack","Stack operations and applications"],
+        ["QUE","Queue","Queues and their applications"],
+        ["TREE","Trees","Binary trees and traversal"],
+        ["ALG","Algorithms","Searching, sorting and complexity"]
+    ],
+
+    "Web Development":[
+        ["HTML","HTML","Structure and semantic elements"],
+        ["CSS","CSS","Styling and responsive design"],
+        ["JS","JavaScript","Client-side programming"],
+        ["DOM","DOM","Web page manipulation"],
+        ["API","APIs","HTTP and REST APIs"],
+        ["ADV","Advanced Web","Frontend and backend concepts"]
+    ]
+
+};
+
+function generateCustom(topic){
+
+    return [
+        ["BAS","Fundamentals","Basic concepts of " + topic],
+        ["CON","Core Concepts","Important concepts of " + topic],
+        ["USE","Applications","Real-world applications"],
+        ["ADV","Advanced Concepts","Advanced topics and techniques"]
+    ];
+
+}
+
+const list = subtopics[topic] || generateCustom(topic);
+
+const grid = document.getElementById("subtopicGrid");
+
+list.forEach((item,index)=>{
+
+    const card = document.createElement("div");
+
+    card.className = "subtopic-card";
+
+    card.innerHTML = `
+        <div class="subtopic-icon">${item[0]}</div>
+        <div class="subtopic-name">${item[1]}</div>
+        <div class="subtopic-description">${item[2]}</div>
+        <div class="check">✓</div>
+    `;
+
+    card.addEventListener("click",()=>{
+
+        document.querySelectorAll(".subtopic-card")
+        .forEach(c=>c.classList.remove("selected"));
+
+        card.classList.add("selected");
+
+        card.dataset.subtopic = item[1];
+
+    });
+
+    grid.appendChild(card);
+
+});
+
+document.getElementById("startPractice").addEventListener("click",()=>{
+
+    const selected =
+        document.querySelector(".subtopic-card.selected");
+
+    if(!selected){
+
+        alert("Please select a subtopic first.");
+
+        return;
+
+    }
+
+    const subtopic =
+        selected.dataset.subtopic;
+
+    window.location.href =
+        "questions.html?topic=" +
+        encodeURIComponent(topic) +
+        "&subtopic=" +
+        encodeURIComponent(subtopic);
+
+});
+
+</script>
+
+</body>
+</html>
